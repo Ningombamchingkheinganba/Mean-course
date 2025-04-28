@@ -8,7 +8,7 @@ import { Post } from './posts/post-list/post.model';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [PostCreateComponent, HeaderComponent, PostListComponent],
+  imports: [HeaderComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
