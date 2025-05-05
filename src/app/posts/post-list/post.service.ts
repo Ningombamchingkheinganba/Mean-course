@@ -28,7 +28,8 @@ export class PostService {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               }
             }),
             maxPosts: postData.maxPosts
@@ -46,7 +47,7 @@ export class PostService {
   }
 
   getPost(postId: string) {
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(`http://localhost:3000/api/posts/${postId}`);
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(`http://localhost:3000/api/posts/${postId}`);
   }
 
   addPost(title: string, content: string, image: File) {
@@ -72,11 +73,10 @@ export class PostService {
         id: id,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        creator: null
       }
     }
-    console.log("postData", postData);
-
     this.http.put(`http://localhost:3000/api/posts/${id}`, postData).subscribe((responseData) => {
       this.router.navigate(["/"]);
     })
