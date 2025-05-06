@@ -6,7 +6,7 @@ const mongoose = require("mongoose");
 const postsRoutes = require("./routes/posts");
 const userRoutes = require("./routes/user");
 
-mongoose.connect("mongodb+srv://ningchingkhei:wvD4sFZii2j9JNEP@cluster0.iho9k7k.mongodb.net/node-angular?retryWrites=true").then(()=>{
+mongoose.connect("mongodb+srv://ningchingkhei:" + process.env.MONGO_ATLAS_PW  + "@cluster0.iho9k7k.mongodb.net/node-angular?retryWrites=true").then(()=>{
     console.log("Connected to database");
 })
 .catch(()=> {

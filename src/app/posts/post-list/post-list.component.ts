@@ -1,19 +1,16 @@
-import { CommonModule } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import {MatExpansionModule} from '@angular/material/expansion';
 import { Post } from './post.model';
 import { PostService } from './post.service';
 import { Subscription } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
-import { RouterLink } from '@angular/router';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
-import {MatPaginatorModule, PageEvent} from '@angular/material/paginator';
+import { PageEvent} from '@angular/material/paginator';
 import { AuthService } from '../../auth/signup/auth.service';
+import { AngularMaterialModule } from '../../angular-material.module';
+import { PostModule } from './posts.module';
 
 @Component({
   selector: 'app-post-list',
   standalone: true,
-  imports: [MatExpansionModule, CommonModule, MatButtonModule, RouterLink, MatProgressSpinnerModule,MatPaginatorModule],
+  imports: [AngularMaterialModule, PostModule],
   templateUrl: './post-list.component.html',
   styleUrl: './post-list.component.scss'
 })
@@ -56,8 +53,11 @@ export class PostListComponent implements OnInit, OnDestroy {
   }
 
   onDelete(id: string): void {
+    this.isLoading = true;
     this.postService.deletePost(id).subscribe(()=> {
       this.postService.getPosts(this.postsPerPage, this.currentPage);
+    }, ()=> {
+      this.isLoading = false;
     });
   }
 

@@ -1,24 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, FormsModule, NgForm, ReactiveFormsModule, Validators } from '@angular/forms';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatButtonModule} from '@angular/material/button';
-import {MatCardModule} from '@angular/material/card';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Post } from '../post-list/post.model';
-import { CommonModule } from '@angular/common';
 import { PostService } from '../post-list/post.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import { mimeType } from './mime-type.validator';
+import { Subscription } from 'rxjs';
+import { AuthService } from '../../auth/signup/auth.service';
+import { AngularMaterialModule } from '../../angular-material.module';
+import { PostModule } from '../post-list/posts.module';
 
 @Component({
   selector: 'app-post-create',
   standalone: true,
-  imports: [FormsModule, MatFormFieldModule,MatInputModule, MatButtonModule, MatCardModule, CommonModule, MatProgressSpinnerModule, ReactiveFormsModule],
+  imports: [AngularMaterialModule, PostModule],
   templateUrl: './post-create.component.html',
   styleUrl: './post-create.component.scss'
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit , OnDestroy{
 
   public enteredTitle!: string;
   public enteredContent!: string;
@@ -28,10 +26,15 @@ export class PostCreateComponent implements OnInit {
   public isLoading = false;
   public imagePreview!: string;
   public form!: FormGroup;
+  private authStatusSub!: Subscription;
 
-  constructor(private postService: PostService, private route: ActivatedRoute) {}
+  constructor(private postService: PostService, private route: ActivatedRoute, private authService: AuthService) {}
 
   ngOnInit(): void {
+    this.authStatusSub = this.authService.getAuthStatusListener()
+    .subscribe(authStatus => {
+      this.isLoading= false;
+    })
     this.form = new FormGroup({
       "title" : new FormControl(null, {validators: [Validators.required, Validators.minLength(5)]}),
       "content" : new FormControl(null, {validators: [Validators.required]}),
@@ -82,5 +85,9 @@ export class PostCreateComponent implements OnInit {
     }
 
     this.form.reset();
+  }
+
+  ngOnDestroy(): void {
+    this.authStatusSub.unsubscribe();
   }
 }

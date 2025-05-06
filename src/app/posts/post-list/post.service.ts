@@ -3,7 +3,9 @@ import { Post } from './post.model';
 import { map, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
+const BACKEND_URL = environment.apiUrl+ "/posts";
 @Injectable({
   providedIn: 'root'
 })
@@ -18,7 +20,7 @@ export class PostService {
     const queryParams = `?pageSize=${pagePerSize}&page=${currentPage}`
     this.http
       .get<{ message: string, posts: Post[], maxPosts: number }>(
-        "http://localhost:3000/api/posts" + queryParams
+        BACKEND_URL + queryParams
       )
       .pipe(
         map(postData => {
@@ -47,7 +49,7 @@ export class PostService {
   }
 
   getPost(postId: string) {
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(`http://localhost:3000/api/posts/${postId}`);
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string, creator: string }>(`${BACKEND_URL}/${postId}`);
   }
 
   addPost(title: string, content: string, image: File) {
@@ -55,7 +57,7 @@ export class PostService {
     postData.append("title", title);
     postData.append("content", content);
     postData.append("image", image, title);
-    this.http.post<{ message: string, post: Post }>("http://localhost:3000/api/posts", postData).subscribe((responseData) => {
+    this.http.post<{ message: string, post: Post }>(BACKEND_URL, postData).subscribe((responseData) => {
       this.router.navigate(["/"]);
     })
   }
@@ -77,12 +79,12 @@ export class PostService {
         creator: null
       }
     }
-    this.http.put(`http://localhost:3000/api/posts/${id}`, postData).subscribe((responseData) => {
+    this.http.put(`${BACKEND_URL}/${id}`, postData).subscribe((responseData) => {
       this.router.navigate(["/"]);
     })
   }
 
   deletePost(id: string) {
-    return this.http.delete<{ message: string }>(`http://localhost:3000/api/posts/${id}`);
+    return this.http.delete<{ message: string }>(`${BACKEND_URL}/${id}`);
   }
 }
